@@ -9,24 +9,24 @@ import {
   Image
 } from 'react-native';
 
-export default function App() {
+function App() {
   return (
     <SafeAreaView style={styles.container}>
       
-      {/* Logo / Título */}
+
       <View style={styles.header}>
-        <Text style={styles.title}>EXTENSÃO TECNOLÓGICA</Text>
+        <Text style={styles.title}>Login</Text>
       </View>
 
-      {/* Card de Login */}
+  
       <View style={styles.card}>
         
-        {/* Avatar */}
+
         <View style={styles.avatarContainer}>
           <View style={styles.avatar} />
         </View>
 
-        {/* Campo Email */}
+
         <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
@@ -34,7 +34,7 @@ export default function App() {
           keyboardType="email-address"
         />
 
-        {/* Campo Senha */}
+
         <Text style={styles.label}>Senha</Text>
         <TextInput
           style={styles.input}
@@ -42,17 +42,17 @@ export default function App() {
           secureTextEntry
         />
 
-        {/* Botão Logar */}
+
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Logar</Text>
         </TouchableOpacity>
 
-        {/* Botão Cadastro */}
+
         <TouchableOpacity style={styles.buttonSecondary}>
           <Text style={styles.buttonText}>Cadastre-se</Text>
         </TouchableOpacity>
 
-        {/* Esqueceu senha */}
+
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>esqueceu a senha</Text>
         </TouchableOpacity>
@@ -63,10 +63,77 @@ export default function App() {
   );
 }
 
+function cadastro() {
+  return (
+    <SafeAreaView style={styles.container}>
+      
+      
+      <View style={styles.header}>
+        <Text style={styles.title}>Cadastro</Text>
+      </View>
+      <View style={styles.card}>
+
+        <Text style={styles.label}>Nome</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu nome"
+        />
+
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu email"
+          keyboardType="email-address"
+        />
+
+        <Text style={styles.label}>Senha</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite sua senha"
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        </TouchableOpacity>
+      </View>
+
+    </SafeAreaView>
+  );
+}
+
+
+export default function esqueceu_senha() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Esqueceu Senha</Text>
+      </View>
+      <View style={styles.card}>
+        
+        <Text style={styles.title}>Esqueceu a senha</Text>
+
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu email"
+          keyboardType="email-address"
+        />
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Enviar</Text>
+        </TouchableOpacity>
+
+      </View>
+    </SafeAreaView>
+  );
+}
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#d4d2d2',
     alignItems: 'center',
     justifyContent: 'center',
   },
