@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,8 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useRoute } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 function Login({navigation}) {
   return (
@@ -171,10 +172,126 @@ function Contato({navigation}) {
         />
 
         <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Salvar</Text>
+        </TouchableOpacity>
+
+        
+      </View>
+
+    </SafeAreaView>
+  );
+}
+
+
+function Lista_contato({navigation, route}){
+
+const { username, phone } = route.params || {};
+
+  return(
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+        <Text style={styles.titleContatos}>Lista de Contatos</Text>
+      </View>
+
+      <View style={styles.card}>
+        
+    <TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
+  <View style={styles.userRow}>
+  <MaterialCommunityIcons
+    name="account-circle"
+    size={50}
+    color="#000000"
+  />
+
+  <View style={styles.textContainer}>
+    <Text style={styles.label}>{username || 'Usuário'}</Text>
+    <Text style={styles.label}> {phone || 'Telefone'}</Text>
+  </View>
+</View>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
+  <View style={styles.userRow}>
+  <MaterialCommunityIcons
+    name="account-circle"
+    size={50}
+    color="#000000"
+  />
+
+  <View style={styles.textContainer}>
+    <Text style={styles.label}>Usuário2</Text>
+    <Text style={styles.label}>Telefone2</Text>
+  </View>
+</View>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
+  <View style={styles.userRow}>
+  <MaterialCommunityIcons
+    name="account-circle"
+    size={50}
+    color="#000000"
+  />
+
+  <View style={styles.textContainer}>
+    <Text style={styles.label}>Usuário3</Text>
+    <Text style={styles.label}>Telefone3</Text>
+  </View>
+</View>
+</TouchableOpacity>
+        
+
+</View>
+      </SafeAreaView>
+
+      
+  );
+}
+
+function Contato2({navigation, route}) {
+
+  const [nome, setNome] = useState('');
+  const [telefone, setTelefone] = useState('');
+
+  return (
+    <SafeAreaView style={styles.container}>
+      
+      
+      <View style={styles.header}>
+        <Text style={styles.title}>Contato</Text>
+      </View>
+      <View style={styles.card}>
+
+        <Text style={styles.label}>Nome</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu nome"
+          value={nome}
+          onChangeText={setNome}
+        />
+
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu email"
+          keyboardType="email-address"
+        />
+
+        <Text style={styles.label}>Telefone</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite seu telefone"
+          value={telefone}
+          onChangeText={setTelefone}
+        />
+
+        <TouchableOpacity onPress={()=>navigation.navigate('Lista_contato', { username: nome,
+              phone: telefone,}) }
+        style={styles.button}>
           <Text style={styles.buttonText}>Alterar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.buttonExcluir}>
           <Text style={styles.buttonText}>Excluir</Text>
         </TouchableOpacity>
       </View>
@@ -184,44 +301,15 @@ function Contato({navigation}) {
 }
 
 
-function Lista_contato({navigation, route}){
-  return(
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-        <Text style={styles.titleContatos}>Lista de Contatos</Text>
-      </View>
-
-      <View style={styles.card}>
-        
-
-        <View style={styles.avatarContainer}>
-          <View style={styles.avatar} />
-        </View>
 
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu email"
-          keyboardType="email-address"
-        />
 
 
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite sua senha"
-          secureTextEntry
-        />
 
-</View>
-      </SafeAreaView>
 
-      
-  );
 
-  
-}
+
+
 
 
 const Stack = createNativeStackNavigator();
@@ -234,8 +322,9 @@ return (
 <Stack.Screen name="Cadastro" component={Cadastro} />
 <Stack.Screen name="Esqueceu_senha" component={Esqueceu_senha} />
 <Stack.Screen name="Contato" component={Contato} />
+<Stack.Screen name="Contato2" component={Contato2} />
 <Stack.Screen name="Lista_contato" component={Lista_contato}
-options={{
+options={({ navigation }) => ({
     title: "Lista de Contatos",
     headerRight: () => (
       <TouchableOpacity
@@ -245,7 +334,7 @@ options={{
         <Ionicons name="add" size={28} color="black" />
       </TouchableOpacity>
     ),
-  }} />
+  })} />
 </Stack.Navigator>
 </NavigationContainer>
 );
@@ -317,6 +406,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
+  buttonExcluir: {
+    width: '100%',
+    height: 45,
+    backgroundColor: '#ff0000',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  }
+  ,
   buttonSecondary: {
     width: '100%',
     height: 45,
@@ -334,5 +433,21 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: '#000',
     fontSize: 12,
+  },
+  containerUser: {
+    flexDirection: 'row',      // ícone + textos lado a lado
+    alignItems: 'center',      // centraliza verticalmente
+  },
+  textContainer: {
+    marginLeft: 10,            // espaço entre ícone e textos
+  },
+  
+  userRow: {
+    flexDirection: 'row',   // lado a lado
+    alignItems: 'center',   // centraliza verticalmente
+    marginTop: 15,
+  },
+  textContainer: {
+    marginLeft: 10,         // espaço entre ícone e texto
   },
 });
