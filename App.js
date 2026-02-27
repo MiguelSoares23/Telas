@@ -185,73 +185,61 @@ function Contato({navigation}) {
 
 function Lista_contato({navigation, route}){
 
-const { username, phone } = route.params || {};
+const [contatos, setContatos] = React.useState([
+    { nome: 'Usuário1', telefone: '1111-1111' },
+    { nome: 'Usuário2', telefone: '2222-2222' },
+  ]);
 
   return(
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-        <Text style={styles.titleContatos}>Lista de Contatos</Text>
-      </View>
-
       <View style={styles.card}>
-        
-    <TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
-  <View style={styles.userRow}>
-  <MaterialCommunityIcons
-    name="account-circle"
-    size={50}
-    color="#000000"
-  />
+        {contatos.map((c, i) => (
+          <TouchableOpacity
+            key={i}
+            onPress={() =>
+              navigation.navigate('Contato2', {
+                contato: c,
+                index: i,
+                contatos,
+                setContatos,
+              })
+            }
+          >
+            <View style={styles.userRow}>
+              <MaterialCommunityIcons name="account-circle" size={50} />
+              <View style={styles.textContainer}>
+                <Text>{c.nome}</Text>
+                <Text>{c.telefone}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </SafeAreaView>
 
-  <View style={styles.textContainer}>
-    <Text style={styles.label}>{username || 'Usuário'}</Text>
-    <Text style={styles.label}> {phone || 'Telefone'}</Text>
-  </View>
-</View>
-</TouchableOpacity>
-
-<TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
-  <View style={styles.userRow}>
-  <MaterialCommunityIcons
-    name="account-circle"
-    size={50}
-    color="#000000"
-  />
-
-  <View style={styles.textContainer}>
-    <Text style={styles.label}>Usuário2</Text>
-    <Text style={styles.label}>Telefone2</Text>
-  </View>
-</View>
-</TouchableOpacity>
-
-<TouchableOpacity onPress={()=>navigation.navigate('Contato2')}>
-  <View style={styles.userRow}>
-  <MaterialCommunityIcons
-    name="account-circle"
-    size={50}
-    color="#000000"
-  />
-
-  <View style={styles.textContainer}>
-    <Text style={styles.label}>Usuário3</Text>
-    <Text style={styles.label}>Telefone3</Text>
-  </View>
-</View>
-</TouchableOpacity>
-        
-
-</View>
-      </SafeAreaView>
-
-      
   );
 }
 
 function Contato2({navigation, route}) {
 
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const { contato, index, contatos, setContatos } = route.params;
+
+  const [nome, setNome] = React.useState(contato.nome);
+  const [telefone, setTelefone] = React.useState(contato.telefone);
+
+
+  function excluir() {
+    const novos = contatos.filter((_, i) => i !== index);
+    setContatos(novos);
+    navigation.goBack();
+  }
+
+  function salvar() {
+    const novos = [...contatos];
+    novos[index] = { nome, telefone };
+    setContatos(novos);
+    navigation.goBack();
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -285,13 +273,12 @@ function Contato2({navigation, route}) {
           onChangeText={setTelefone}
         />
 
-        <TouchableOpacity onPress={()=>navigation.navigate('Lista_contato', { username: nome,
-              phone: telefone,}) }
+        <TouchableOpacity onPress={salvar}
         style={styles.button}>
           <Text style={styles.buttonText}>Alterar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonExcluir}>
+        <TouchableOpacity onPress={excluir} style={styles.buttonExcluir}>
           <Text style={styles.buttonText}>Excluir</Text>
         </TouchableOpacity>
       </View>
