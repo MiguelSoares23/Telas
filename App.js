@@ -1,4 +1,5 @@
 import React, { useState }  from 'react';
+import { useEffect } from 'react';
 import {
   View,
   Text,
@@ -29,7 +30,7 @@ function Login({navigation}) {
         
 
         <View style={styles.avatarContainer}>
-          <View style={styles.avatar} />
+          <MaterialCommunityIcons name="account-circle" size={100} />
         </View>
 
 
@@ -142,6 +143,10 @@ function Esqueceu_senha({navigation}) {
 }
 
 function Contato({navigation}) {
+
+const [nome, setNome] = useState('');
+const [telefone, setTelefone] = useState('');
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -153,9 +158,11 @@ function Contato({navigation}) {
 
         <Text style={styles.label}>Nome</Text>
         <TextInput
-          style={styles.input}
-          placeholder="Digite seu nome"
-        />
+        style={styles.input}
+        placeholder="Digite seu nome"
+        value={nome}
+        onChangeText={setNome}
+      />
 
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -165,16 +172,20 @@ function Contato({navigation}) {
         />
 
         <Text style={styles.label}>Telefone</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite sua senha"
-          secureTextEntry
-        />
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Salvar</Text>
-        </TouchableOpacity>
-
+            <TextInput
+      style={styles.input}
+      placeholder="Digite seu telefone"
+      value={telefone}
+      onChangeText={setTelefone}
+    />
+        <TouchableOpacity 
+  onPress={() => navigation.navigate('Lista_contato', {
+    novoContato: { nome, telefone }
+  })}
+  style={styles.button}
+>
+  <Text style={styles.buttonText}>Salvar</Text>
+</TouchableOpacity>
         
       </View>
 
@@ -190,6 +201,24 @@ const [contatos, setContatos] = React.useState([
     { nome: 'Usuário2', telefone: '2222-2222' },
   ]);
 
+  useEffect(() => {
+  if (route.params?.tipo === 'editar') {
+    const novos = [...contatos];
+    novos[route.params.index] = route.params.contatoAtualizado;
+    setContatos(novos);
+  }
+
+  if (route.params?.tipo === 'excluir') {
+    const novos = contatos.filter((_, i) => i !== route.params.index);
+    setContatos(novos);
+  }
+
+  if (route.params?.novoContato) {
+    setContatos([...contatos, route.params.novoContato]);
+  }
+}, [route.params]);
+
+
   return(
       <SafeAreaView style={styles.container}>
       <View style={styles.card}>
@@ -200,8 +229,6 @@ const [contatos, setContatos] = React.useState([
               navigation.navigate('Contato2', {
                 contato: c,
                 index: i,
-                contatos,
-                setContatos,
               })
             }
           >
@@ -222,24 +249,32 @@ const [contatos, setContatos] = React.useState([
 
 function Contato2({navigation, route}) {
 
-  const { contato, index, contatos, setContatos } = route.params;
+  const { contato, index } = route.params;
 
-  const [nome, setNome] = React.useState(contato.nome);
-  const [telefone, setTelefone] = React.useState(contato.telefone);
+  const [nome, setNome] = React.useState('');
+  const [telefone, setTelefone] = React.useState('');
 
-
-  function excluir() {
-    const novos = contatos.filter((_, i) => i !== index);
-    setContatos(novos);
-    navigation.goBack();
-  }
+  useEffect(() => {
+    if (contato) {
+      setNome(contato.nome);
+      setTelefone(contato.telefone);
+    }
+  }, []);
 
   function salvar() {
-    const novos = [...contatos];
-    novos[index] = { nome, telefone };
-    setContatos(novos);
-    navigation.goBack();
-  }
+  navigation.navigate('Lista_contato', {
+    tipo: 'editar',
+    contatoAtualizado: { nome, telefone },
+    index
+  });
+}
+
+function excluir() {
+  navigation.navigate('Lista_contato', {
+    tipo: 'excluir',
+    index
+  });
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -286,17 +321,6 @@ function Contato2({navigation, route}) {
     </SafeAreaView>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 const Stack = createNativeStackNavigator();
