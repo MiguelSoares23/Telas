@@ -14,7 +14,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useRoute } from '@react-navigation/native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-
+import axios from 'axios';
 
 function Login({navigation}) {
   return (
@@ -147,6 +147,17 @@ function Contato({navigation}) {
 const [nome, setNome] = useState('');
 const [telefone, setTelefone] = useState('');
 
+function salvar() {
+  axios.post('http://localhost:3000/clientes', {
+    nome: nome,
+    telefone: telefone
+  })
+  .then(() => {
+    navigation.navigate('Lista_contato');
+  })
+  .catch(error => console.log(error));
+}
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -178,12 +189,8 @@ const [telefone, setTelefone] = useState('');
       value={telefone}
       onChangeText={setTelefone}
     />
-        <TouchableOpacity 
-  onPress={() => navigation.navigate('Lista_contato', {
-    novoContato: { nome, telefone }
-  })}
-  style={styles.button}
->
+
+<TouchableOpacity onPress={salvar} style={styles.button}>
   <Text style={styles.buttonText}>Salvar</Text>
 </TouchableOpacity>
         
@@ -196,27 +203,17 @@ const [telefone, setTelefone] = useState('');
 
 function Lista_contato({navigation, route}){
 
-const [contatos, setContatos] = React.useState([
-    { nome: 'Usuário1', telefone: '1111-1111' },
-    { nome: 'Usuário2', telefone: '2222-2222' },
-  ]);
+const [contatos, setContatos] = useState([]);
 
-  useEffect(() => {
-  if (route.params?.tipo === 'editar') {
-    const novos = [...contatos];
-    novos[route.params.index] = route.params.contatoAtualizado;
-    setContatos(novos);
-  }
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    axios.get('http://localhost:3000/clientes')
+      .then(response => setContatos(response.data))
+      .catch(error => console.log(error));
+  });
 
-  if (route.params?.tipo === 'excluir') {
-    const novos = contatos.filter((_, i) => i !== route.params.index);
-    setContatos(novos);
-  }
-
-  if (route.params?.novoContato) {
-    setContatos([...contatos, route.params.novoContato]);
-  }
-}, [route.params]);
+  return unsubscribe;
+}, [navigation]);
 
 
   return(
@@ -251,6 +248,8 @@ function Contato2({navigation, route}) {
 
   const { contato, index } = route.params;
 
+  console.log(contato);
+
   const [nome, setNome] = React.useState('');
   const [telefone, setTelefone] = React.useState('');
 
@@ -261,19 +260,23 @@ function Contato2({navigation, route}) {
     }
   }, []);
 
-  function salvar() {
-  navigation.navigate('Lista_contato', {
-    tipo: 'editar',
-    contatoAtualizado: { nome, telefone },
-    index
-  });
+ function salvar() {
+  axios.put(`http://localhost:3000/clientes/${contato.id}`, {
+    nome: nome,
+    telefone: telefone
+  })
+  .then(() => {
+    navigation.navigate('Lista_contato');
+  })
+  .catch(error => console.log(error));
 }
 
 function excluir() {
-  navigation.navigate('Lista_contato', {
-    tipo: 'excluir',
-    index
-  });
+  axios.delete(`http://localhost:3000/clientes/${contato.id}`)
+    .then(() => {
+      navigation.navigate('Lista_contato');
+    })
+    .catch(error => console.log(error));
 }
 
   return (
@@ -350,6 +353,8 @@ options={({ navigation }) => ({
 </NavigationContainer>
 );
 }
+
+
 
 export default App;
 
